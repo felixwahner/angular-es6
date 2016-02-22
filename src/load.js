@@ -9,36 +9,45 @@ function firstToLowerCase(str) {
 }
 
 // const req = require.context('./', true, /.*\.js$/);
-export function directives(req) {
+export function directives(req, namingConventions = true) {
   req.keys().forEach((filePath) => {
     const parts = filePath.split('/');
-    if (parts.length !== 3) {
+    if (namingConventions && parts.length !== 3) {
       return;
     }
 
+    var name = '';
+
     const fileName = path.basename(filePath, path.extname(filePath));
-    const name = parts[1];
-    if (!fileName || !name || fileName.toLowerCase() !== name.toLowerCase()) {
+    if( namingConventions ) {
+      name = parts[1];
+    }
+    if (namingConventions && (!fileName || !name || fileName.toLowerCase() !== name.toLowerCase())) {
       return;
     }
 
     const Direktive = req(filePath);
+    if(!namingConventions) {
+      name = Direktive.default ? Direktive.default.name : Direktive.name;
+    }
     register(name, createDirectiveFactory(Direktive.default ? Direktive.default : Direktive));
   });
 }
 
-export function controllers(req, moduleName = 'controllers') {
+export function controllers(req, moduleName = 'controllers', namingConventions = true) {
   const module = angular.module(moduleName, []);
 
   req.keys().forEach((filePath) => {
+
     const parts = filePath.split('/');
-    if (parts.length !== 3) {
+
+    if (namingConventions && parts.length !== 3) {
       return;
     }
 
     const fileName = path.basename(filePath, path.extname(filePath));
     const name = parts[1];
-    if (!fileName || !name || fileName.toLowerCase() !== name.toLowerCase()) {
+    if (namingConventions && (!fileName || !name || fileName.toLowerCase() !== name.toLowerCase())) {
       return;
     }
 

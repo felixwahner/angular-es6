@@ -35,37 +35,51 @@ function firstToLowerCase(str) {
 
 // const req = require.context('./', true, /.*\.js$/);
 function directives(req) {
+  var namingConventions = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
+
   req.keys().forEach(function (filePath) {
     var parts = filePath.split('/');
-    if (parts.length !== 3) {
+    if (namingConventions && parts.length !== 3) {
       return;
     }
 
+    var name = '';
+
     var fileName = _path2.default.basename(filePath, _path2.default.extname(filePath));
-    var name = parts[1];
-    if (!fileName || !name || fileName.toLowerCase() !== name.toLowerCase()) {
+    if (namingConventions) {
+      name = parts[1];
+    }
+    if (namingConventions && (!fileName || !name || fileName.toLowerCase() !== name.toLowerCase())) {
       return;
     }
 
     var Direktive = req(filePath);
+    if (!namingConventions) {
+      console.log(Direktive);
+      console.log(Direktive.default ? Direktive.default.name : Direktive.name);
+      name = Direktive.default ? Direktive.default.name : Direktive.name;
+    }
     (0, _compileProvider.register)(name, (0, _createDirectiveFactory2.default)(Direktive.default ? Direktive.default : Direktive));
   });
 }
 
 function controllers(req) {
   var moduleName = arguments.length <= 1 || arguments[1] === undefined ? 'controllers' : arguments[1];
+  var namingConventions = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 
   var module = _angular2.default.module(moduleName, []);
 
   req.keys().forEach(function (filePath) {
+
     var parts = filePath.split('/');
-    if (parts.length !== 3) {
+
+    if (namingConventions && parts.length !== 3) {
       return;
     }
 
     var fileName = _path2.default.basename(filePath, _path2.default.extname(filePath));
     var name = parts[1];
-    if (!fileName || !name || fileName.toLowerCase() !== name.toLowerCase()) {
+    if (namingConventions && (!fileName || !name || fileName.toLowerCase() !== name.toLowerCase())) {
       return;
     }
 
