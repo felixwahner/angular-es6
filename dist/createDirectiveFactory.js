@@ -20,11 +20,13 @@ function storeInjections() {
   var args = arguments[2];
   var varName = arguments.length <= 3 || arguments[3] === undefined ? '$inject' : arguments[3];
 
+  if (typeof instance === 'undefined') return false;
   var instanceInject = instance[varName] = instance[varName] || {};
 
   $inject.forEach(function (injectName, index) {
     instanceInject[injectName] = args[index];
   });
+  return true;
 }
 
 function createDirectiveFactory(Directive) {
@@ -74,9 +76,9 @@ function createDirectiveFactory(Directive) {
 
           var inst = new (Function.prototype.bind.apply(Directive, [null].concat(args)))();
           inst.ctrl = _this;
-          storeInjections(instance.controller.$inject, inst.ctrl, controllerArgs);
-
-          controllerOrg.apply(inst, controllerArgs);
+          if (storeInjections(instance.controller.$inject, inst.ctrl, controllerArgs)) {
+            controllerOrg.apply(inst, controllerArgs);
+          };
         };
 
         instance.controller.$inject = controllerOrg.$inject || ['$scope', '$element', '$attrs'];

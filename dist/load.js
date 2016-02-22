@@ -55,8 +55,6 @@ function directives(req) {
 
     var Direktive = req(filePath);
     if (!namingConventions) {
-      console.log(Direktive);
-      console.log(Direktive.default ? Direktive.default.name : Direktive.name);
       name = Direktive.default ? Direktive.default.name : Direktive.name;
     }
     (0, _compileProvider.register)(name, (0, _createDirectiveFactory2.default)(Direktive.default ? Direktive.default : Direktive));

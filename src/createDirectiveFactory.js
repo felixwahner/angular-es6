@@ -3,11 +3,13 @@ import isFunction from 'lodash/lang/isFunction';
 const LINK_INJECT = ['scope', 'element', 'attrs', 'controller', 'transcludeFn'];
 
 export function storeInjections($inject = [], instance, args, varName = '$inject') {
+  if(typeof instance === 'undefined') return false;
   const instanceInject = instance[varName] = instance[varName] || {};
 
   $inject.forEach((injectName, index) => {
     instanceInject[injectName] = args[index];
   });
+  return true;
 }
 
 export default function createDirectiveFactory(Directive) {
@@ -39,9 +41,9 @@ export default function createDirectiveFactory(Directive) {
       instance.controller = (...controllerArgs) => {
         const inst = new Directive(...args);
         inst.ctrl = this;
-        storeInjections(instance.controller.$inject, inst.ctrl, controllerArgs);
-
-        controllerOrg.apply(inst, controllerArgs);
+        if( storeInjections(instance.controller.$inject, inst.ctrl, controllerArgs) ) {
+          controllerOrg.apply(inst, controllerArgs);
+        };
       };
 
       instance.controller.$inject = controllerOrg.$inject || ['$scope', '$element', '$attrs'];
