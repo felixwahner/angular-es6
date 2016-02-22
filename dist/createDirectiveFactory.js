@@ -75,10 +75,12 @@ function createDirectiveFactory(Directive) {
           }
 
           var inst = new (Function.prototype.bind.apply(Directive, [null].concat(args)))();
+
           inst.ctrl = _this;
-          if (storeInjections(instance.controller.$inject, inst.ctrl, controllerArgs)) {
-            controllerOrg.apply(inst, controllerArgs);
-          };
+
+          storeInjections(instance.controller.$inject, inst.ctrl, controllerArgs);
+
+          controllerOrg.apply(inst, controllerArgs);
         };
 
         instance.controller.$inject = controllerOrg.$inject || ['$scope', '$element', '$attrs'];

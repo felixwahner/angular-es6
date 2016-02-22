@@ -40,10 +40,13 @@ export default function createDirectiveFactory(Directive) {
       const controllerOrg = instance.controller;
       instance.controller = (...controllerArgs) => {
         const inst = new Directive(...args);
+
         inst.ctrl = this;
-        if( storeInjections(instance.controller.$inject, inst.ctrl, controllerArgs) ) {
-          controllerOrg.apply(inst, controllerArgs);
-        };
+
+        storeInjections(instance.controller.$inject, inst.ctrl, controllerArgs);
+
+        controllerOrg.apply(inst, controllerArgs);
+
       };
 
       instance.controller.$inject = controllerOrg.$inject || ['$scope', '$element', '$attrs'];
