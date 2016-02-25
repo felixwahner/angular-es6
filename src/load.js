@@ -53,7 +53,7 @@ export function controllers(req, moduleName = 'controllers', namingConventions =
     }
 
     const Controller = req(filePath);
-    const name = Controller.default ? Controller.default : Controller.name;
+    const name = Controller.default ? Controller.default.name : Controller.name;
     module.controller(capitalize(name), Controller.default ? Controller.default : Controller);
   });
 }
