@@ -46,12 +46,14 @@ export function controllers(req, moduleName = 'controllers', namingConventions =
     }
 
     const fileName = path.basename(filePath, path.extname(filePath));
-    const name = parts[1];
-    if (namingConventions && (!fileName || !name || fileName.toLowerCase() !== name.toLowerCase())) {
+    const folder = parts[1];
+
+    if (namingConventions && (!fileName || !folder || fileName.toLowerCase() !== name.toLowerCase())) {
       return;
     }
 
     const Controller = req(filePath);
+    const name = Controller.default ? Controller.default : Controller.name;
     module.controller(capitalize(name), Controller.default ? Controller.default : Controller);
   });
 }
