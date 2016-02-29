@@ -76,12 +76,14 @@ function controllers(req) {
     }
 
     var fileName = _path2.default.basename(filePath, _path2.default.extname(filePath));
-    var name = parts[1];
-    if (namingConventions && (!fileName || !name || fileName.toLowerCase() !== name.toLowerCase())) {
+    var folder = parts[1];
+
+    if (namingConventions && (!fileName || !folder || fileName.toLowerCase() !== name.toLowerCase())) {
       return;
     }
 
     var Controller = req(filePath);
+    var name = Controller.default ? Controller.default.name : Controller.name;
     module.controller((0, _capitalize2.default)(name), Controller.default ? Controller.default : Controller);
   });
 }
