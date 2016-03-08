@@ -90,6 +90,7 @@ function controllers(req) {
 
 function services(req) {
   var moduleName = arguments.length <= 1 || arguments[1] === undefined ? 'services' : arguments[1];
+  var namingConventions = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 
   var module = _angular2.default.module(moduleName, []);
 
@@ -106,6 +107,7 @@ function services(req) {
 
 function factories(req) {
   var moduleName = arguments.length <= 1 || arguments[1] === undefined ? 'factories' : arguments[1];
+  var namingConventions = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 
   var module = _angular2.default.module(moduleName, []);
 
@@ -116,12 +118,16 @@ function factories(req) {
     }
 
     var factory = req(filePath);
+    if (!namingConventions) {
+      name = factory.default ? factory.default.name : factory.name;
+    }
     module.factory((0, _capitalize2.default)(name), factory.default ? factory.default : factory);
   });
 }
 
 function filters(req) {
   var moduleName = arguments.length <= 1 || arguments[1] === undefined ? 'filters' : arguments[1];
+  var namingConventions = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 
   var module = _angular2.default.module(moduleName, []);
 
@@ -132,6 +138,9 @@ function filters(req) {
     }
 
     var filter = req(filePath);
+    if (!namingConventions) {
+      name = filter.default ? filter.default.name : filter.name;
+    }
     module.filter(name, filter.default ? filter.default : filter);
   });
 }

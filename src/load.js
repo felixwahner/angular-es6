@@ -58,11 +58,11 @@ export function controllers(req, moduleName = 'controllers', namingConventions =
   });
 }
 
-export function services(req, moduleName = 'services') {
+export function services(req, moduleName = 'services', namingConventions = true) {
   const module = angular.module(moduleName, []);
 
   req.keys().forEach((filePath) => {
-    const name = path.basename(filePath, path.extname(filePath));
+    var name = path.basename(filePath, path.extname(filePath));
     if (name === 'index') {
       return;
     }
@@ -72,30 +72,36 @@ export function services(req, moduleName = 'services') {
   });
 }
 
-export function factories(req, moduleName = 'factories') {
+export function factories(req, moduleName = 'factories', namingConventions = true) {
   const module = angular.module(moduleName, []);
 
   req.keys().forEach((filePath) => {
-    const name = path.basename(filePath, path.extname(filePath));
+    var name = path.basename(filePath, path.extname(filePath));
     if (name === 'index') {
       return;
     }
 
     const factory = req(filePath);
+    if(!namingConventions) {
+      name = factory.default ? factory.default.name : factory.name;
+    }
     module.factory(capitalize(name), factory.default ? factory.default : factory);
   });
 }
 
-export function filters(req, moduleName = 'filters') {
+export function filters(req, moduleName = 'filters', namingConventions = true) {
   const module = angular.module(moduleName, []);
 
   req.keys().forEach((filePath) => {
-    const name = path.basename(filePath, path.extname(filePath));
+    var name = path.basename(filePath, path.extname(filePath));
     if (name === 'index') {
       return;
     }
 
     const filter = req(filePath);
+    if(!namingConventions) {
+      name = filter.default ? filter.default.name : filter.name;
+    }
     module.filter(name, filter.default ? filter.default : filter);
   });
 }
