@@ -19,6 +19,22 @@ export default function createDirectiveFactory(Directive) {
       instance[key] = instance[key];
     });
 
+    if (instance.controller && isFunction(instance.controller)) {
+      const controllerOrg = instance.controller;
+      instance.controller = (...controllerArgs) => {
+        const inst = new Directive(...args);
+
+        inst.ctrl = this;
+
+        storeInjections(instance.controller.$inject, inst.ctrl, controllerArgs);
+
+        controllerOrg.apply(inst, controllerArgs);
+
+      };
+
+      instance.controller.$inject = controllerOrg.$inject || ['$scope', '$element', '$attrs'];
+    }
+
     if (instance.link && isFunction(instance.link)) {
       const linkOrg = instance.link;
       instance.link = (...linkArgs) => {
@@ -34,22 +50,6 @@ export default function createDirectiveFactory(Directive) {
 
         inst.link();
       };
-    }
-
-    if (instance.controller && isFunction(instance.controller)) {
-      const controllerOrg = instance.controller;
-      instance.controller = (...controllerArgs) => {
-        const inst = new Directive(...args);
-
-        inst.ctrl = this;
-
-        storeInjections(instance.controller.$inject, inst.ctrl, controllerArgs);
-
-        controllerOrg.apply(inst, controllerArgs);
-
-      };
-
-      instance.controller.$inject = controllerOrg.$inject || ['$scope', '$element', '$attrs'];
     }
 
     return instance;

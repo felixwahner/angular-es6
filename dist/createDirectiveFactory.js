@@ -42,12 +42,33 @@ function createDirectiveFactory(Directive) {
       instance[key] = instance[key];
     });
 
+    if (instance.controller && (0, _isFunction2.default)(instance.controller)) {
+      (function () {
+        var controllerOrg = instance.controller;
+        instance.controller = function () {
+          for (var _len2 = arguments.length, controllerArgs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+            controllerArgs[_key2] = arguments[_key2];
+          }
+
+          var inst = new (Function.prototype.bind.apply(Directive, [null].concat(args)))();
+
+          inst.ctrl = _this;
+
+          storeInjections(instance.controller.$inject, inst.ctrl, controllerArgs);
+
+          controllerOrg.apply(inst, controllerArgs);
+        };
+
+        instance.controller.$inject = controllerOrg.$inject || ['$scope', '$element', '$attrs'];
+      })();
+    }
+
     if (instance.link && (0, _isFunction2.default)(instance.link)) {
       (function () {
         var linkOrg = instance.link;
         instance.link = function () {
-          for (var _len2 = arguments.length, linkArgs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-            linkArgs[_key2] = arguments[_key2];
+          for (var _len3 = arguments.length, linkArgs = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+            linkArgs[_key3] = arguments[_key3];
           }
 
           var inst = new (Function.prototype.bind.apply(Directive, [null].concat(args)))();
@@ -63,27 +84,6 @@ function createDirectiveFactory(Directive) {
 
           inst.link();
         };
-      })();
-    }
-
-    if (instance.controller && (0, _isFunction2.default)(instance.controller)) {
-      (function () {
-        var controllerOrg = instance.controller;
-        instance.controller = function () {
-          for (var _len3 = arguments.length, controllerArgs = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-            controllerArgs[_key3] = arguments[_key3];
-          }
-
-          var inst = new (Function.prototype.bind.apply(Directive, [null].concat(args)))();
-
-          inst.ctrl = _this;
-
-          storeInjections(instance.controller.$inject, inst.ctrl, controllerArgs);
-
-          controllerOrg.apply(inst, controllerArgs);
-        };
-
-        instance.controller.$inject = controllerOrg.$inject || ['$scope', '$element', '$attrs'];
       })();
     }
 

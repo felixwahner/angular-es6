@@ -34,6 +34,36 @@ export function directives(req, namingConventions = true) {
   });
 }
 
+// const req = require.context('./', true, /.*\.js$/);
+export function components(req, moduleName = 'components', namingConventions = true) {
+  const module = angular.module(moduleName, []);
+
+  req.keys().forEach((filePath) => {
+    const parts = filePath.split('/');
+    if (namingConventions && parts.length !== 3) {
+      return;
+    }
+
+    var name = '';
+
+    const fileName = path.basename(filePath, path.extname(filePath));
+    if( namingConventions ) {
+      name = parts[1];
+    }
+    if (namingConventions && (!fileName || !name || fileName.toLowerCase() !== name.toLowerCase())) {
+      return;
+    }
+
+    const Component = req(filePath);
+
+    if(!namingConventions) {
+      name = Component.default ? Component.default.name : Component.name;
+    }
+    console.log(name);
+    module.component(name, Component.default ? Component.default.config : Component.config);
+  });
+}
+
 export function controllers(req, moduleName = 'controllers', namingConventions = true) {
   const module = angular.module(moduleName, []);
 

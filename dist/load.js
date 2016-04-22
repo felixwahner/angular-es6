@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.directives = directives;
+exports.components = components;
 exports.controllers = controllers;
 exports.services = services;
 exports.factories = factories;
@@ -58,6 +59,39 @@ function directives(req) {
       name = Direktive.default ? Direktive.default.name : Direktive.name;
     }
     (0, _compileProvider.register)(name, (0, _createDirectiveFactory2.default)(Direktive.default ? Direktive.default : Direktive));
+  });
+}
+
+// const req = require.context('./', true, /.*\.js$/);
+function components(req) {
+  var moduleName = arguments.length <= 1 || arguments[1] === undefined ? 'components' : arguments[1];
+  var namingConventions = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+
+  var module = _angular2.default.module(moduleName, []);
+
+  req.keys().forEach(function (filePath) {
+    var parts = filePath.split('/');
+    if (namingConventions && parts.length !== 3) {
+      return;
+    }
+
+    var name = '';
+
+    var fileName = _path2.default.basename(filePath, _path2.default.extname(filePath));
+    if (namingConventions) {
+      name = parts[1];
+    }
+    if (namingConventions && (!fileName || !name || fileName.toLowerCase() !== name.toLowerCase())) {
+      return;
+    }
+
+    var Component = req(filePath);
+
+    if (!namingConventions) {
+      name = Component.default ? Component.default.name : Component.name;
+    }
+    console.log(name);
+    module.component(name, Component.default ? Component.default.config : Component.config);
   });
 }
 
