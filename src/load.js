@@ -59,8 +59,9 @@ export function components(req, moduleName = 'components', namingConventions = t
     if(!namingConventions) {
       name = Component.default ? Component.default.name : Component.name;
     }
-    console.log(name);
+
     module.component(name, Component.default ? Component.default.config : Component.config);
+
   });
 }
 
